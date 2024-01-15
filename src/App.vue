@@ -1,54 +1,122 @@
 <template>
-  <main>1</main>
-  <router-view />
+  <main class="main">
+    <TheLeftSidebar />
+
+    <div class="app">
+      <TheNavbar />
+
+      <router-view />
+
+      <TheControlPanel />
+    </div>
+
+    <TheRightSidebar />
+  </main>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import store from "./store";
+import store from "@/store";
+import TheLeftSidebar from "./components/TheLeftSidebar.vue";
+import TheRightSidebar from "./components/TheRightSidebar.vue";
+import TheControlPanel from "./components/TheControlPanel.vue";
+import TheNavbar from "./components/TheNavbar.vue";
 
 const client_id = "65406aaaa2db441b8d4559e0ffd30852";
-const redirect_uri = "http://localhost:8080";
+const redirect_uri = "http://localhost:8080/";
 
 const authLink = `https://accounts.spotify.com/authorize?client_id=${client_id}&scope=playlist-read-private%20playlist-read-collaborative%20playlist-modify-public%20user-read-recently-played%20playlist-modify-private%20ugc-image-upload%20user-follow-modify%20user-follow-read%20user-library-read%20user-library-modify%20user-read-private%20user-read-email%20user-top-read%20user-read-playback-state&response_type=token&redirect_uri=${redirect_uri}`;
 
+interface User {
+  id: number,
+  name: string,
+  type: string,
+  email: string,
+  country: string,
+  profile_link: string,
+  product: string,
+  images?: Array<string>
+}
+
 export default defineComponent({
+  components: { TheLeftSidebar, TheRightSidebar, TheControlPanel, TheNavbar },
   data() {
-    return {};
+    return {
+      user: {} as User
+    };
   },
   mounted() {
     const hashParams = {
-      access_token: String,
+      access_token: null
     };
-
-    const r = /([^&;=]+)=?([^&;]*)/g,
-      q = window.location.hash.substring(1);
     let e;
-
+    const r = /([^&;=]+)=?([^&;]*)/g, q = window.location.hash.substring(1);
     while ((e = r.exec(q))) {
       // @ts-expect-error: Unreachable code error
       hashParams[e[1]] = decodeURIComponent(e[2]);
     }
-
     if (!hashParams.access_token) {
       window.location.href = authLink;
-    } else {
+    }
+    else {
       console.log(hashParams.access_token);
-
-      //this.props.setToken(hashParams.access_token);
-      store.dispatch("fetchUser", hashParams.access_token);
+      this.getAuthedUser(hashParams.access_token);
     }
   },
+  methods: {
+    getAuthedUser(access_token: string) {
+      const URL = "https://api.spotify.com/v1/me";
+      const newRequest = new Request(URL, {
+        headers: new Headers({
+          Authorization: "Bearer " + access_token,
+        }),
+      });
+      fetch(newRequest)
+        .then((response) => {
+          if (response.statusText === "Unauthorized") {
+            window.location.href = "./";
+          }
+          return response.json();
+        })
+        .then((data) => {
+          this.user = {
+            id: data.id,
+            name: data.display_name || "",
+            email: data.email || "",
+            country: data.country || "",
+            type: data.type || "",
+            images: data.images,
+            product: data.product || "",
+            profile_link: data.external_urls.spotify
+          };
+          console.log(this.user);
+        });
+    },
+  }
 });
 </script>
 
 <style lang="scss">
-@import url("normalize.css");
+@import url("./normalize.scss");
 @import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;700&display=swap");
 
 body {
   background-color: black;
   font-family: "Comfortaa", sans-serif;
   color: white;
+}
+
+.main {
+  display: flex;
+  justify-content: space-between;
+}
+
+.app {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
 }
 </style>
