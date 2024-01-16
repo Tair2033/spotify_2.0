@@ -1,6 +1,8 @@
 <template>
-  <div class="home">
-    changeble place
+  <div class="home-wrapper">
+    <div class="home">
+      home
+    </div>
   </div>
 </template>
 

@@ -35,7 +35,7 @@ interface User {
   country: string,
   profile_link: string,
   product: string,
-  images?: Array<string>
+  image?: string
 }
 
 export default defineComponent({
@@ -59,8 +59,9 @@ export default defineComponent({
       window.location.href = authLink;
     }
     else {
-      console.log(hashParams.access_token);
       this.getAuthedUser(hashParams.access_token);
+
+      store.commit('setToken', hashParams.access_token)
     }
   },
   methods: {
@@ -80,16 +81,18 @@ export default defineComponent({
         })
         .then((data) => {
           this.user = {
-            id: data.id,
-            name: data.display_name || "",
-            email: data.email || "",
-            country: data.country || "",
-            type: data.type || "",
-            images: data.images,
-            product: data.product || "",
-            profile_link: data.external_urls.spotify
+            id: data?.id,
+            name: data?.display_name.split(" ")[0],
+            email: data?.email,
+            country: data?.country,
+            type: data?.type,
+            image: data?.images[1]?.url,
+            product: data?.product.toUpperCase(),
+            profile_link: data?.external_urls?.spotify
           };
-          console.log(this.user);
+
+          store.commit('setUser', this.user)
+
         });
     },
   }
@@ -104,6 +107,7 @@ body {
   background-color: black;
   font-family: "Comfortaa", sans-serif;
   color: white;
+  overflow-x: hidden;
 }
 
 .main {
@@ -118,5 +122,11 @@ body {
   flex-direction: column;
   justify-content: space-between;
   position: relative;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 </style>

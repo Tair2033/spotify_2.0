@@ -1,10 +1,16 @@
 <template>
   <div class="control-wrapper">
     <div class="control">
-      <div class="control__panel panel">
+      <div
+        class="control__panel panel"
+        :class="{'play': checkPlayingStatus(), 'pause': !checkPlayingStatus()}"
+      >
         <div class="panel__like">
           <div class="panel__like-button">
-            <button type="submit" class="btn">
+            <button
+              type="submit"
+              class="btn"
+            >
               <i class="fa-solid fa-heart" />
             </button>
           </div>
@@ -24,29 +30,52 @@
         </div>
         <div class="panel__controls">
           <div class="panel__controls-backward">
-            <button type="button" class="btn">
+            <button
+              type="button"
+              class="btn"
+            >
               <i class="fa-solid fa-backward-step" />
             </button>
           </div>
           <div class="panel__controls-play">
-            <button type="button" class="btn">
-              <i class="fa-solid fa-play" />
+            <button
+              type="button"
+              class="btn"
+              @click="changePlayingStatus()"
+            >
+              <i
+                v-if="!checkPlayingStatus()"
+                class="fa-solid fa-play"
+              />
+              <i
+                v-if="checkPlayingStatus()"
+                class="fa-solid fa-pause"
+              />
             </button>
           </div>
           <div class="panel__controls-forward">
-            <button type="button" class="btn">
+            <button
+              type="button"
+              class="btn"
+            >
               <i class="fa-solid fa-forward-step" />
             </button>
           </div>
           <div class="panel__controls-repeat">
-            <button type="button" class="btn">
+            <button
+              type="button"
+              class="btn"
+            >
               <i class="fa-solid fa-repeat" />
             </button>
           </div>
         </div>
         <div class="panel__volume">
           <div class="panel__volume-icons">
-            <button type="button" class="btn">
+            <button
+              type="button"
+              class="btn"
+            >
               <i class="fa-solid fa-volume-high" />
             </button>
             <!-- <i class="fa-solid fa-volume-low" />
@@ -54,7 +83,11 @@
             <i class="fa-solid fa-volume-xmark" /> -->
           </div>
           <div class="panel__volume-trigger">
-            <input id="" type="range" name="">
+            <input
+              id=""
+              type="range"
+              name=""
+            >
           </div>
         </div>
       </div>
@@ -64,8 +97,18 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import store from "@/store"
 
-export default defineComponent({});
+export default defineComponent({
+  methods: {
+    changePlayingStatus() {
+      store.commit('changePlayingStatus')
+    },
+    checkPlayingStatus() {
+      return store.getters.getPlayingStatus;
+    }
+  }
+});
 </script>
 
 <style lang="scss" scoped>
@@ -78,12 +121,23 @@ export default defineComponent({});
   overflow: hidden;
 }
 
+.play {
+  border: 2px solid rgb(1, 77, 1);
+}
+
+.pause {
+  border: 2px solid black;
+}
+
 .control {
   margin: 0 20px;
+  width: 90%;
 
   &__panel {
+    transition: all 0.6s ease-in;
+    width: 100%;
     border-radius: 20px;
-    border: 2px solid rgb(1, 77, 1);
+    background-color: rgb(12, 12, 12);
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -163,13 +217,19 @@ export default defineComponent({});
     background-color: rgb(4, 203, 4);
     width: 50px;
     height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-radius: 50%;
     transition: all 0.2s ease;
-
   }
 
   &__controls-play button:hover {
     background-color: rgb(11, 222, 11);
+  }
+
+  &__controls-play button:active {
+    background-color: rgb(39, 249, 39);
   }
 
   &__controls-play button:hover i {
@@ -250,13 +310,14 @@ export default defineComponent({});
   &__name {
     color: rgb(255, 255, 255);
     cursor: default;
-
+    font-size: 16px;
+    margin-bottom: 5px;
   }
 
   &__album {
     color: rgb(171, 170, 170);
     cursor: default;
-
+    font-size: 11px;
   }
 }
 </style>
