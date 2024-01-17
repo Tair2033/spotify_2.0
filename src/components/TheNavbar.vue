@@ -20,16 +20,32 @@
         <button class="navbar__buttons-button btn">
           <i class="fa-solid fa-gear" />
         </button>
+
+        <button
+          v-if="!getRightSidebarStatus()"
+          class="open btn"
+          @click="changeRightSidebarStatus()"
+        >
+          <i class="fa-solid fa-angles-left" />
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
+import store from '@/store';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-
+  methods: {
+    getRightSidebarStatus() {
+      return store.getters.getRightSidebarStatus
+    },
+    changeRightSidebarStatus() {
+      store.commit('changeRightSidebarStatus')
+    }
+  }
 })
 </script>
 
@@ -43,6 +59,25 @@ export default defineComponent({
   color: rgb(171, 170, 170);
   background: none;
   border: none;
+  padding: 0 10px;
+}
+
+.open {
+  position: absolute;
+  right: 0;
+}
+
+.open i {
+  font-size: 30px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.open:hover {
+  i {
+    color: rgb(4, 203, 4);
+  }
 }
 
 .navbar {
@@ -50,7 +85,7 @@ export default defineComponent({
   display: flex;
   justify-content: space-between;
   align-items: center;
-
+  
   &__search {
     flex-grow: 1;
     margin-left: 30px;
@@ -93,6 +128,7 @@ export default defineComponent({
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-right: 30px;
   }
 
   &__buttons-button {

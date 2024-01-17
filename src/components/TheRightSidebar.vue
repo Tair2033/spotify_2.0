@@ -1,76 +1,90 @@
 <template>
-  <div class="sidebar-wrapper">
-    <div class="sidebar">
-      <div class="sidebar__user">
-        <div class="sidebar__user-profile user">
-          <div class="user__image">
-            <img :src="getUser().image">
-          </div>
-          <div class="user__info">
-            <div class="user__info-name">
-              Hi, {{ getUser().name }}
-            </div>
-            <div class="user__info-product">
-              {{ getUser().product }}
-            </div>
-          </div>
-        </div>
+  <Transition name="sidebar">
+    <div
+      v-if="getRightSidebarStatus()"
+      class="sidebar-wrapper"
+    >
+      <div
+        class="close"
+        @click="changeRightSidebarStatus()"
+      >
+        <i class="fa-solid fa-xmark" />
       </div>
-      <div class="sidebar__library">
-        <div class="sidebar__library-heading heading">
-          Your Library
-        </div>
-        <div class="sidebar__library-list">
-          <ul class="cathegory">
-            <li
-              v-for="(item, index) in cathegories"
-              :key="index"
-            >
-              <RouterLink
-                :to="item.link"
-                class="cathegory__item"
-              >
-                <div class="cathegory__item-icon">
-                  <i :class="item.icon" />
-                </div>
-                <div class="cathegory__item-name">
-                  {{ item.name }}
-                </div>
-              </RouterLink>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div class="sidebar__friends">
-        <div class="sidebar__friends-heading heading">
-          Friends activity
-        </div>
 
-        <div class="friends">
-          <!-- <ul class="friend">
+      <div
+        class="sidebar"
+      >
+        <div class="sidebar__user">
+          <div class="sidebar__user-profile user">
+            <div class="user__image">
+              <img :src="getUser().image">
+            </div>
+            <div class="user__info">
+              <div class="user__info-name">
+                Hi, {{ getUser().name }}
+              </div>
+              <div class="user__info-product">
+                {{ getUser().product }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar__library">
+          <div class="sidebar__library-heading heading">
+            Your Library
+          </div>
+          <div class="sidebar__library-list">
+            <ul class="cathegory">
+              <li
+                v-for="(item, index) in cathegories"
+                :key="index"
+              >
+                <RouterLink
+                  :to="item.link"
+                  class="cathegory__item"
+                >
+                  <div class="cathegory__item-icon">
+                    <i :class="item.icon" />
+                  </div>
+                  <div class="cathegory__item-name">
+                    {{ item.name }}
+                  </div>
+                </RouterLink>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="sidebar__friends">
+          <div class="sidebar__friends-heading heading">
+            Friends activity
+          </div>
+
+          <div class="friends">
+            <!-- <ul class="friend">
             <li class="friend__item">
 
             </li>
           </ul> -->
-          <div class="friends__nothing">
-            <span>
-              No friends yet
-            </span>
-            <button class="friends__nothing-find">
-              Find friends
-            </button>
+            <div class="friends__nothing">
+              <span>
+                No friends yet
+              </span>
+              <button class="friends__nothing-find">
+                Find friends
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="sidebar__lyric">
+        <div class="sidebar__lyric">
         <!-- Lyric component in production -->
-      </div>
+        </div>
 
-      <div class="sidebar__info">
-        © {{ new Date().getFullYear() }} Spotify 2.0
+        <div class="sidebar__info">
+          © {{ new Date().getFullYear() }} Spotify 2.0
+        </div>
       </div>
     </div>
-  </div>
+  </Transition>
 </template>
 
 <script lang="ts">
@@ -107,6 +121,12 @@ export default defineComponent({
   methods: {
     getUser() {
       return store.getters.getUser
+    },
+    getRightSidebarStatus() {
+      return store.getters.getRightSidebarStatus
+    },
+    changeRightSidebarStatus() {
+      store.commit('changeRightSidebarStatus')
     }
   }
 })
@@ -114,12 +134,61 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.sidebar-enter-active,
+.sidebar-leave-active {
+  // transition: transform 0.5s ease;
+}
+
+.sidebar-enter-from,
+.sidebar-leave-to {
+  transform: translateX(100%);
+}
+
+.router-link-active {
+  div {
+    text-decoration: underline;
+    color: white;
+
+    i {
+      color: white;
+    }
+  }
+}
+
 .sidebar-wrapper {
   background: rgb(10,10,10);
   background: linear-gradient(38deg, rgba(10,10,10,1) 0%, rgba(16,16,17,1) 48%); 
   min-width: 20vw;
   min-height: 100vh;
   position: relative;
+}
+
+.close {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  i {
+    font-size: 20px;
+    transition: all 0.2s ease;
+    color: rgb(107, 107, 107);
+  }
+}
+
+.close:hover {
+  background-color: rgb(107, 107, 107);
+
+  i {
+    color: black;
+  }
 }
 
 .sidebar {

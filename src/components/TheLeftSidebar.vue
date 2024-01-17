@@ -14,14 +14,18 @@
           <li
             v-for="(item, index) in menuItems"
             :key="index"
-            class="menu__item"
           >
-            <div class="menu__item-icon">
-              <i :class="item.icon" />
-            </div>
-            <div class="menu__item-name">
-              {{ item.name }}
-            </div>
+            <RouterLink
+              :to="item.link"
+              class="menu__item"
+            >
+              <div class="menu__item-icon">
+                <i :class="item.icon" />
+              </div>
+              <div class="menu__item-name">
+                {{ item.name }}
+              </div>
+            </RouterLink>
           </li>
         </ul>
       </div>
@@ -55,27 +59,33 @@ export default defineComponent({
       menuItems: [
         {
           name: "Home",
-          icon: "fa-solid fa-house"
+          icon: "fa-solid fa-house",
+          link: "/"
         },
         {
           name: "Explore",
-          icon: "fa-solid fa-compass"
+          icon: "fa-solid fa-compass",
+          link: "/Explore"
         },
         {
           name: "Radio",
-          icon: "fa-solid fa-radio"
+          icon: "fa-solid fa-radio",
+          link: "/Radio"
         },
         {
           name: "Podcasts",
-          icon: "fa-solid fa-podcast"
+          icon: "fa-solid fa-podcast",
+          link: "/Podcasts"
         },
         {
           name: "Genres",
-          icon: "fa-solid fa-record-vinyl"
+          icon: "fa-solid fa-record-vinyl",
+          link: "/Genres"
         },
         {
           name: "Events",
-          icon: "fa-solid fa-trophy"
+          icon: "fa-solid fa-trophy",
+          link: "/Events"
         },
       ]
     }
@@ -89,8 +99,22 @@ export default defineComponent({
   position: relative;
 }
 
+.router-link-active {
+  background-color: rgb(12, 12, 12);
+
+
+  i {
+    padding-left: 20px;
+    color: white;
+  }
+
+  div {
+    color: white;
+  }
+}
+
 .sidebar {
-  
+
   &__logo {
     width: 100%;
     padding-left: 35px;
@@ -117,14 +141,6 @@ export default defineComponent({
     display: flex;
     justify-content: center;
   }
-
-  &__exit-button {
-
-  }
-
-  &__exit-button button {
-
-  }
 }
 
 .menu {
@@ -135,24 +151,30 @@ export default defineComponent({
   &__item {
     transition: all 0.15s ease;
     padding: 20px 0 20px 50px;
+    margin: 5px 0;
     display: flex;
     align-items: center;
     list-style: none;
     margin-right: 29%;
     border-top-right-radius: 30px;
     border-bottom-right-radius: 30px;
+
+    i {
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
   }
 
   &__item:hover {
     background-color: rgb(12, 12, 12);
 
-    padding-left: 60px;
-
     i {
+      padding-left: 20px;
       color: white;
     }
-    
+
     div {
+      cursor: pointer;
       color: white;
     }
   }
@@ -182,10 +204,10 @@ export default defineComponent({
   background-color: rgb(12, 12, 12);
   border: 1px solid rgb(12, 12, 12);
   cursor: pointer;
-  
+
   &__icon {
     margin-right: 15px;
-    
+
     i {
       font-weight: 600;
       color: white;

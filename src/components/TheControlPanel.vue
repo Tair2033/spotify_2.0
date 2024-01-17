@@ -3,7 +3,7 @@
     <div class="control">
       <div
         class="control__panel panel"
-        :class="{'play': checkPlayingStatus(), 'pause': !checkPlayingStatus()}"
+        :class="{ 'play': getCurrentTrack?.is_playing, 'pause': !getCurrentTrack?.is_playing }"
       >
         <div class="panel__like">
           <div class="panel__like-button">
@@ -17,14 +17,14 @@
         </div>
         <div class="panel__sound">
           <div class="panel__sound-preview">
-            <img src="../assets/noir.jpg">
+            <img :src="getCurrentTrack?.item?.album.images[1].url">
           </div>
           <div class="panel__sound-track track">
             <div class="track__name">
-              name
+              {{ getCurrentTrack?.item?.name.substring(0, 27) }}
             </div>
             <div class="track__album">
-              album
+              {{ getCurrentTrack?.item?.artists[0].name }}
             </div>
           </div>
         </div>
@@ -41,14 +41,14 @@
             <button
               type="button"
               class="btn"
-              @click="changePlayingStatus()"
+              @click="toggleTrack()"
             >
               <i
-                v-if="!checkPlayingStatus()"
+                v-if="!getCurrentTrack.is_playing"
                 class="fa-solid fa-play"
               />
               <i
-                v-if="checkPlayingStatus()"
+                v-if="getCurrentTrack.is_playing"
                 class="fa-solid fa-pause"
               />
             </button>
@@ -59,14 +59,6 @@
               class="btn"
             >
               <i class="fa-solid fa-forward-step" />
-            </button>
-          </div>
-          <div class="panel__controls-repeat">
-            <button
-              type="button"
-              class="btn"
-            >
-              <i class="fa-solid fa-repeat" />
             </button>
           </div>
         </div>
@@ -100,29 +92,42 @@ import { defineComponent } from "vue";
 import store from "@/store"
 
 export default defineComponent({
-  methods: {
-    changePlayingStatus() {
-      store.commit('changePlayingStatus')
+  computed: {
+    getCurrentTrack() {
+      console.log(store.getters.getActiveTrack);
+      
+      return store.getters.getActiveTrack;
     },
-    checkPlayingStatus() {
-      return store.getters.getPlayingStatus;
-    }
+  },
+  methods: {
+    toggleTrack() {
+      store.dispatch('playPauseTrack')
+    },
   }
 });
 </script>
 
 <style lang="scss" scoped>
 .control-wrapper {
-  width: 100%;
   min-height: 10vh;
   display: flex;
   align-items: center;
   flex-direction: column;
   overflow: hidden;
+  margin-top: 26px;
+  width: 90%;
 }
 
 .play {
   border: 2px solid rgb(1, 77, 1);
+
+  .panel__controls-play button {
+    border: 2px solid rgb(160, 255, 160);
+    i {
+      color: white;
+    }
+  }
+
 }
 
 .pause {
@@ -131,9 +136,12 @@ export default defineComponent({
 
 .control {
   margin: 0 20px;
-  width: 90%;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
 
   &__panel {
+    position: relative;
     transition: all 0.6s ease-in;
     width: 100%;
     border-radius: 20px;
@@ -146,8 +154,14 @@ export default defineComponent({
 
 .panel {
   padding: 6px 20px;
+  position: relative;
+  height: 65px;
+  width: 100%;
 
-  &__like {}
+  &__like {
+    position: absolute;
+    left: 20px;
+  }
 
   &__like-button {}
 
@@ -165,32 +179,41 @@ export default defineComponent({
   }
 
   &__sound {
+    position: absolute;
+    left: 60px;
     display: flex;
     align-items: center;
-    margin-right: 200px;
+    padding-right: 100px;
   }
 
   &__sound-preview {
     display: flex;
     align-items: center;
     height: 50px;
-    min-width: 50px;
+    width: 50px;
     margin-left: 25px;
     margin-right: 25px;
   }
 
   &__sound-preview img {
     border-radius: 6px;
+    object-fit: cover;
     width: 100%;
     height: 100%;
   }
 
-  &__sound-track {}
+  &__sound-track {
+  }
 
   &__controls {
+    z-index: 3;
+    position: absolute;
+    left: 44%;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
     display: flex;
     align-items: center;
-    margin-right: 100px;
   }
 
   &__controls-backward {}
@@ -222,6 +245,7 @@ export default defineComponent({
     align-items: center;
     border-radius: 50%;
     transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0);
   }
 
   &__controls-play button:hover {
@@ -256,30 +280,17 @@ export default defineComponent({
     }
   }
 
-  &__controls-repeat {
-    margin-left: 50px;
-  }
-
-  &__controls-repeat button i {
-    transition: all 0.2s ease;
-    color: rgb(171, 170, 170);
-    font-size: 20px;
-  }
-
-  &__controls-repeat button:hover {
-
-    i {
-      color: white;
-    }
-  }
-
   &__volume {
+    position: absolute;
+    right: 25px;
     display: flex;
-
+    z-index: 1;
   }
 
 
-  &__volume-icons {}
+  &__volume-icons {
+    
+  }
 
   &__volume-icons button i {
     transition: all 0.2s ease;

@@ -51,6 +51,7 @@ export default defineComponent({
     };
     let e;
     const r = /([^&;=]+)=?([^&;]*)/g, q = window.location.hash.substring(1);
+
     while ((e = r.exec(q))) {
       // @ts-expect-error: Unreachable code error
       hashParams[e[1]] = decodeURIComponent(e[2]);
@@ -62,6 +63,8 @@ export default defineComponent({
       this.getAuthedUser(hashParams.access_token);
 
       store.commit('setToken', hashParams.access_token)
+
+      store.dispatch('getCurrentPlayback')
     }
   },
   methods: {
@@ -107,7 +110,7 @@ body {
   background-color: black;
   font-family: "Comfortaa", sans-serif;
   color: white;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 .main {
@@ -116,7 +119,9 @@ body {
 }
 
 .app {
+  overflow: hidden;
   width: 100%;
+  height: 100vh;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -128,5 +133,21 @@ body {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+}
+
+li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+.heading {
+  font-size: 22px;
+  font-weight: bolder;
+  color: white;
+  margin-bottom: 20px;
+  margin-top: 20px;
 }
 </style>
