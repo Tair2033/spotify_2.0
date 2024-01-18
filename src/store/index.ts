@@ -18,6 +18,9 @@ export default createStore({
     activeTrack: [] as Array<object>,
     userPlaylists: [] as Array<object>,
     topArtists: [] as Array<object>,
+    selectedArtist: {} as object,
+    selectedArtistTracks: {} as Array<object>,
+    categories: [] as Array<object>,
     recentlyTracks: [] as Array<object>,
     controlPanel: {
       isPlaying: false,
@@ -28,6 +31,7 @@ export default createStore({
     loaders: {
       homeLoader: false,
       appLoader: false,
+      exploreLoader: false,
     },
   },
   getters: {
@@ -52,6 +56,9 @@ export default createStore({
     getHomeLoaderStatus(state) {
       return state.loaders.homeLoader;
     },
+    getExploreLoaderStatus(state) {
+      return state.loaders.exploreLoader;
+    },
     getUserTopArtists(state) {
       return state.topArtists;
     },
@@ -60,6 +67,12 @@ export default createStore({
     },
     getActiveTrack(state) {
       return state.activeTrack;
+    },
+    getSelectedArtist(state) {
+      return state.selectedArtist;
+    },
+    getCategories(state) {
+      return state.categories;
     },
   },
   mutations: {
@@ -82,6 +95,13 @@ export default createStore({
 
       state.loaders.homeLoader = true;
     },
+    changeExploreLoaderStatus(state, mode) {
+      if (mode === "on") {
+        state.loaders.exploreLoader = false;
+      }
+
+      state.loaders.exploreLoader = true;
+    },
     changeAppLoaderStatus(state, mode) {
       if (mode === "on") {
         state.loaders.appLoader = false;
@@ -90,21 +110,48 @@ export default createStore({
       state.loaders.appLoader = true;
     },
     setPlaylists(state, data) {
-      state.userPlaylists = [...data.items];
+      state.userPlaylists = [...data?.items];
     },
     setTopArtists(state, data) {
-      state.topArtists = [...data.items];
+      state.topArtists = [...data?.items];
+    },
+    setSelectedArtist(state, data) {
+      state.selectedArtist = data;
     },
     setRecentlyTracks(state, data) {
-      console.log(data.items);
-
-      state.recentlyTracks = [...data.items];
+      state.recentlyTracks = [...data?.items];
     },
     setPlayback(state, data) {
       state.activeTrack = data;
     },
+    setCategories(state, data) {
+      state.categories = data;
+    },
   },
   actions: {
+    async getAllCategories(context) {
+      const URL = "https://api.spotify.com/v1/browse/categories";
+      const newRequest = new Request(URL, {
+        headers: new Headers({
+          Authorization: "Bearer " + this.state.access_token,
+        }),
+      });
+
+      await fetch(newRequest)
+        .then((response) => {
+          if (response.statusText === "Unauthorized") {
+            window.location.href = "./";
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+
+          context.commit("setCategories", data);
+
+          context.commit("changeExploreLoaderStatus");
+        });
+    },
     async getCurrentUserPlaylists(context) {
       const URL = "https://api.spotify.com/v1/me/playlists";
       const newRequest = new Request(URL, {
@@ -124,6 +171,29 @@ export default createStore({
           context.commit("setPlaylists", data);
 
           context.commit("changeAppLoaderStatus");
+        });
+    },
+    async getArtist(context, id) {
+      const URL = `https://api.spotify.com/v1/artists/${id}`;
+      const newRequest = new Request(URL, {
+        headers: new Headers({
+          Authorization: "Bearer " + this.state.access_token,
+        }),
+      });
+
+      await fetch(newRequest)
+        .then((response) => {
+          if (response.statusText === "Unauthorized") {
+            window.location.href = "./";
+          }
+          return response.json();
+        })
+        .then((data) => {
+          context.commit("setSelectedArtist", data);
+
+          console.log(data);
+
+          // context.commit("changeAppLoaderStatus");
         });
     },
     async getTopArtists(context) {
@@ -182,6 +252,8 @@ export default createStore({
           return response.json();
         })
         .then((data) => {
+          console.log(data);
+
           context.commit("setPlayback", data);
         });
     },

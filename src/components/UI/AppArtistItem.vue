@@ -2,7 +2,7 @@
   <div class="artist-wrapper">
     <div class="artist">
       <RouterLink
-        to="/"
+        :to="'/artist/' + artist.id"
         class="artist__link"
       >
         <div class="artist__top">

@@ -3,7 +3,7 @@
     <div class="control">
       <div
         class="control__panel panel"
-        :class="{ 'play': getCurrentTrack?.is_playing, 'pause': !getCurrentTrack?.is_playing }"
+        :class="{ 'play': checkActiveTrackStatus, 'pause': !checkActiveTrackStatus }"
       >
         <div class="panel__like">
           <div class="panel__like-button">
@@ -44,11 +44,11 @@
               @click="toggleTrack()"
             >
               <i
-                v-if="!getCurrentTrack.is_playing"
+                v-if="!checkActiveTrackStatus"
                 class="fa-solid fa-play"
               />
               <i
-                v-if="getCurrentTrack.is_playing"
+                v-if="checkActiveTrackStatus"
                 class="fa-solid fa-pause"
               />
             </button>
@@ -67,18 +67,26 @@
             <button
               type="button"
               class="btn"
+              @click="muteTrack()"
             >
-              <i class="fa-solid fa-volume-high" />
+              <i
+                v-if="!volume.mute && volume.default > 0"
+                class="fa-solid fa-volume-high"
+              />
+              <i
+                v-if="volume.mute || volume.default == 0"
+                class="fa-solid fa-volume-xmark"
+              />
             </button>
-            <!-- <i class="fa-solid fa-volume-low" />
-            <i class="fa-solid fa-volume-off" />
-            <i class="fa-solid fa-volume-xmark" /> -->
           </div>
           <div class="panel__volume-trigger">
             <input
-              id=""
+              v-model="volume.default"
               type="range"
-              name=""
+              name="volume"
+              step="0.05"
+              max="1"
+              @change="changeVolume()"
             >
           </div>
         </div>
@@ -91,17 +99,56 @@
 import { defineComponent } from "vue";
 import store from "@/store"
 
+let audio = new Audio()
+let savedVol: number;
+
 export default defineComponent({
+  data() {
+    return {
+      volume: {
+        default: 0.1,
+        mute: false
+      },
+    }
+  },
   computed: {
     getCurrentTrack() {
-      console.log(store.getters.getActiveTrack);
-      
+      audio.volume = 0.1
+
+      audio.src = store.getters.getActiveTrack?.item?.preview_url
+
       return store.getters.getActiveTrack;
     },
+    checkActiveTrackStatus() {
+      return store.getters.getPlayingStatus
+    }
   },
   methods: {
+    changeVolume() {
+      audio.volume = this.$data.volume.default;
+    },
+    muteTrack() {
+      if (!this.$data.volume.mute) {
+        savedVol = this.$data.volume.default;
+
+        this.$data.volume.default = 0;
+        audio.volume = 0;
+      } else {
+        this.$data.volume.default = savedVol;
+        audio.volume = savedVol;
+      }
+
+      this.$data.volume.mute = !this.$data.volume.mute;
+    },
     toggleTrack() {
-      store.dispatch('playPauseTrack')
+      if (!this.checkActiveTrackStatus) {
+        audio.play();
+      } else {
+        audio.pause();
+      }
+      audio.loop = true;
+
+      store.commit('changePlayingStatus')
     },
   }
 });
@@ -123,6 +170,7 @@ export default defineComponent({
 
   .panel__controls-play button {
     border: 2px solid rgb(160, 255, 160);
+
     i {
       color: white;
     }
@@ -202,12 +250,10 @@ export default defineComponent({
     height: 100%;
   }
 
-  &__sound-track {
-  }
+  &__sound-track {}
 
   &__controls {
     z-index: 3;
-    position: absolute;
     left: 44%;
     right: 0;
     margin-left: auto;
@@ -288,9 +334,7 @@ export default defineComponent({
   }
 
 
-  &__volume-icons {
-    
-  }
+  &__volume-icons {}
 
   &__volume-icons button i {
     transition: all 0.2s ease;
