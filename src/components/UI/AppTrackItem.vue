@@ -55,6 +55,7 @@
 </template>
 
 <script lang="ts">
+import store from '@/store';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -80,7 +81,11 @@ export default defineComponent({
     },
     toggleTrack() {
       this.isPlaying = !this.isPlaying
-    }
+
+      store.commit('setPlayback', this.track)
+
+      store.commit('changePlayingStatus', "on")
+    },
   }
 })
 </script>

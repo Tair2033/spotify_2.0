@@ -1,7 +1,7 @@
 <template>
   <Transition name="sidebar">
     <div
-      v-if="getRightSidebarStatus()"
+      v-if="getRightSidebarStatus"
       class="sidebar-wrapper"
     >
       <div
@@ -17,14 +17,14 @@
         <div class="sidebar__user">
           <div class="sidebar__user-profile user">
             <div class="user__image">
-              <img :src="getUser().image">
+              <img :src="getUser?.image">
             </div>
             <div class="user__info">
               <div class="user__info-name">
-                Hi, {{ getUser().name }}
+                Hi, {{ getUser?.name }}
               </div>
               <div class="user__info-product">
-                {{ getUser().product }}
+                {{ getUser?.product }}
               </div>
             </div>
           </div>
@@ -40,14 +40,14 @@
                 :key="index"
               >
                 <RouterLink
-                  :to="item.link"
+                  :to="item?.link"
                   class="cathegory__item"
                 >
                   <div class="cathegory__item-icon">
-                    <i :class="item.icon" />
+                    <i :class="item?.icon" />
                   </div>
                   <div class="cathegory__item-name">
-                    {{ item.name }}
+                    {{ item?.name }}
                   </div>
                 </RouterLink>
               </li>
@@ -118,13 +118,15 @@ export default defineComponent({
       ]
     }
   },
-  methods: {
+  computed: {
     getUser() {
       return store.getters.getUser
     },
     getRightSidebarStatus() {
       return store.getters.getRightSidebarStatus
     },
+  },
+  methods: {
     changeRightSidebarStatus() {
       store.commit('changeRightSidebarStatus')
     }

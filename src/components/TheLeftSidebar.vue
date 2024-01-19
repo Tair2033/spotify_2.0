@@ -16,14 +16,14 @@
             :key="index"
           >
             <RouterLink
-              :to="item.link"
+              :to="item?.link"
               class="menu__item"
             >
               <div class="menu__item-icon">
-                <i :class="item.icon" />
+                <i :class="item?.icon" />
               </div>
               <div class="menu__item-name">
-                {{ item.name }}
+                {{ item?.name }}
               </div>
             </RouterLink>
           </li>

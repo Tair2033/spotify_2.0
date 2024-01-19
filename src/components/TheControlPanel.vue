@@ -17,14 +17,14 @@
         </div>
         <div class="panel__sound">
           <div class="panel__sound-preview">
-            <img :src="getCurrentTrack?.item?.album.images[1].url">
+            <img :src="getCurrentTrack?.album.images[1].url">
           </div>
           <div class="panel__sound-track track">
             <div class="track__name">
-              {{ getCurrentTrack?.item?.name.substring(0, 27) }}
+              {{ getCurrentTrack?.name.substring(0, 27) }}
             </div>
             <div class="track__album">
-              {{ getCurrentTrack?.item?.artists[0].name }}
+              {{ getCurrentTrack?.artists[0].name }}
             </div>
           </div>
         </div>
@@ -115,7 +115,7 @@ export default defineComponent({
     getCurrentTrack() {
       audio.volume = 0.1
 
-      audio.src = store.getters.getActiveTrack?.item?.preview_url
+      audio.src = store.getters.getActiveTrack?.preview_url
 
       return store.getters.getActiveTrack;
     },

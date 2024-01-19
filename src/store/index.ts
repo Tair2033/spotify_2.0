@@ -15,7 +15,7 @@ export default createStore({
   state: {
     access_token: "",
     user: {} as User,
-    activeTrack: [] as Array<object>,
+    activeTrack: null,
     userPlaylists: [] as Array<object>,
     topArtists: [] as Array<object>,
     selectedArtist: {} as object,
@@ -82,7 +82,12 @@ export default createStore({
     setUser(state, payload: User) {
       state.user = { ...payload };
     },
-    changePlayingStatus(state) {
+    changePlayingStatus(state, mode) {
+      if (mode == "on") {
+        state.controlPanel.isPlaying = true;
+        return;
+      }
+
       state.controlPanel.isPlaying = !state.controlPanel.isPlaying;
     },
     changeRightSidebarStatus(state) {
@@ -145,8 +150,6 @@ export default createStore({
           return response.json();
         })
         .then((data) => {
-          console.log(data);
-
           context.commit("setCategories", data);
 
           context.commit("changeExploreLoaderStatus");
@@ -249,12 +252,17 @@ export default createStore({
           if (response.statusText === "Unauthorized") {
             window.location.href = "./";
           }
-          return response.json();
+
+          if (response.status == 200) {
+            return response.json();
+          }
         })
         .then((data) => {
-          console.log(data);
-
-          context.commit("setPlayback", data);
+          if (!data) {
+            context.commit("setPlayback", null);
+          } else {
+            context.commit("setPlayback", data.item);
+          }
         });
     },
   },

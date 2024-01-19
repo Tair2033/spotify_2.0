@@ -2,7 +2,7 @@
   <div class="home-wrapper">
     <div class="home">
       <div
-        v-if="!checkLoaderStatus()"
+        v-if="!checkLoaderStatus"
         class="home__loader"
       >
         <AppLoader />
@@ -17,7 +17,7 @@
           <div class="section__artists">
             <ul class="section__list">
               <li
-                v-for="(artist, index) in getArtists()"
+                v-for="(artist, index) in getArtists"
                 :key="index"
                 class="section__list-item"
               >
@@ -35,11 +35,13 @@
           <div class="section__tracks tracks">
             <ul class="tracks__list">
               <li
-                v-for="(track, index) in getRecentlyTracks()"
+                v-for="(track, index) in getRecentlyTracks"
                 :key="index"
                 class="tracks__list-item"
               >
-                <AppTrackItem :track="track?.track" />
+                <AppTrackItem
+                  :track="track?.track"
+                />
               </li>
             </ul>
           </div>
@@ -59,11 +61,7 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "HomeView",
   components: { AppLoader, AppArtistItem, AppTrackItem },
-  mounted() {
-    store.dispatch('getTopArtists')
-    store.dispatch('getRecentlyTracks')
-  },
-  methods: {
+  computed: {
     checkLoaderStatus() {
       return store.getters.getHomeLoaderStatus
     },
@@ -73,6 +71,10 @@ export default defineComponent({
     getRecentlyTracks() {
       return store.getters.getRecentlyTracks
     }
+  },
+  mounted() {
+    store.dispatch('getTopArtists')
+    store.dispatch('getRecentlyTracks')
   }
 });
 </script>
@@ -120,6 +122,10 @@ export default defineComponent({
     overflow-x: auto;
     display: flex;
     padding-bottom: 15px;
+  }
+
+  &__list::-webkit-scrollbar {
+    display: none;
   }
 
   &__list-item {}

@@ -7,7 +7,9 @@
 
       <router-view />
 
-      <TheControlPanel />
+      <Transition name="control">
+        <TheControlPanel v-if="checkPlayback !== null" />
+      </Transition>
     </div>
 
     <TheRightSidebar />
@@ -45,6 +47,11 @@ export default defineComponent({
       user: {} as User
     };
   },
+  computed: {
+    checkPlayback() {
+      return store.getters.getActiveTrack
+    },
+  },
   mounted() {
     const hashParams = {
       access_token: null
@@ -64,7 +71,7 @@ export default defineComponent({
 
       store.commit('setToken', hashParams.access_token)
 
-      store.dispatch('getCurrentPlayback')
+      store.dispatch('getCurrentPlayback')      
     }
   },
   methods: {
@@ -150,4 +157,37 @@ a {
   margin-bottom: 20px;
   margin-top: 20px;
 }
+
+
+
+.control-enter-active,
+.control-leave-active {
+  transition: all 0.2s ease;
+}
+
+.control-enter-from,
+.control-leave-to {
+  transform: translateY(100%);
+}
+
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
 </style>

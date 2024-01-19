@@ -21,7 +21,9 @@
         </div>
       </div>
       <div class="playlist__play">
-        <button class="btn">
+        <button
+          class="btn"
+        >
           <i class="fa-solid fa-play" />
           <!-- <i class="fa-solid fa-pause" />                   -->
         </button>
@@ -31,6 +33,7 @@
 </template>
 
 <script lang="ts">
+import store from '@/store';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
