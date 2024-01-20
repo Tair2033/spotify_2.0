@@ -1,24 +1,8 @@
-# spotify2.0
+# Spotify 2.0
 
-## Project setup
-```
-npm install
-```
+> ### Новая версия приложения spotify web с авторизацей.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Preview
 
-### Compiles and minifies for production
-```
-npm run build
-```
+https://github.com/Tair2033/spotify_2.0/assets/63341187/f7a311cb-7d94-4825-b50f-7622be7aedc4
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
