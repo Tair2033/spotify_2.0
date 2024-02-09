@@ -52,6 +52,7 @@
 </template>
 
 <script lang="ts">
+
 import AppArtistItem from "@/components/UI/AppArtistItem.vue";
 import AppLoader from "@/components/UI/AppLoader.vue";
 import AppTrackItem from "@/components/UI/AppTrackItem.vue";
