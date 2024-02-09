@@ -1,6 +1,13 @@
 <template>
-  <main class="main">
+  <main
+    class="main"
+    color-scheme="light"
+  >
     <TheLeftSidebar />
+
+    <button @click="toggleDark">
+      Toggle
+    </button>
 
     <div class="app">
       <TheNavbar />
@@ -23,6 +30,16 @@ import TheLeftSidebar from "./components/TheLeftSidebar.vue";
 import TheRightSidebar from "./components/TheRightSidebar.vue";
 import TheControlPanel from "./components/TheControlPanel.vue";
 import TheNavbar from "./components/TheNavbar.vue";
+
+import { useDark, useToggle } from '@vueuse/core'
+
+const isDark = useDark({
+  selector: 'body',
+  attribute: 'color-scheme',
+  valueDark: 'dark',
+  valueLight: 'light',
+})
+const toggleDark = useToggle(isDark)
 
 const client_id = "65406aaaa2db441b8d4559e0ffd30852";
 const redirect_uri = "http://localhost:8080/";
